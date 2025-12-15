@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: "Warehouse-Producer"
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    consumer:
+      group-id: "myGroup"
