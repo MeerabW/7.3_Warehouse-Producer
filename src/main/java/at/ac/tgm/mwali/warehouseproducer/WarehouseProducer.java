@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Component
-public class MessageProducer {
+public class WarehouseProducer {
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
