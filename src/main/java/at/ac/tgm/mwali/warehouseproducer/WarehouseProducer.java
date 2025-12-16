@@ -1,23 +1,29 @@
 package at.ac.tgm.mwali.warehouseproducer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import at.ac.tgm.mwali.shared.WarehouseData;
 
 @RestController
-@Component
 public class WarehouseProducer {
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private KafkaTemplate<String, WarehouseData> kafkaTemplate;
+    private static final Logger log = LoggerFactory.getLogger(WarehouseProducer.class);
 
-    @GetMapping("/send")
-    public String sendMessage(@RequestParam(value = "message", defaultValue = "") String message) {
-        kafkaTemplate.send("quickstart-events", message);
-        return "Message '" + message + "' sent.";
+    @PostMapping("/send")
+    public ResponseEntity<WarehouseData> sendWarehouse(@RequestBody WarehouseData warehouse) {
+        if (warehouse.getWarehouseID() == null) {
+            return ResponseEntity.badRequest().body(warehouse);
+        }
+
+        kafkaTemplate.send("warehouse-001", warehouse.getWarehouseID(), warehouse);
+        log.info("WAREHOUSE 001 Data Sent: {}", warehouse.getWarehouseID());
+        return ResponseEntity.ok(warehouse);
     }
 
 }
